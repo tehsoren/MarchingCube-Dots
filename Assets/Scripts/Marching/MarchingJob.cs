@@ -15,12 +15,10 @@ namespace Marching
         [WriteOnly] public NativeList<int> triangles;
         public NativeHashMap<int, int> presentVertices;
         private int counter;
-         //public NativeHashMap<int, int> verticesMapping;//key is 2 corners, to index in vertices
         public void Execute()
         {
             
             counter = 0;
-            //verticesMapping = new NativeHashMap<int, int>();
             for (int x = 0; x < Settings.chunkSize; x++)
             {
                 for (int y = 0; y < Settings.chunkSize; y++)
@@ -34,6 +32,7 @@ namespace Marching
                         int triIndex = MarchingHelper.GetCubeIndex(cubeData, Settings.isoLevel);
                         //find triangles
                         FindTriangles(new int3(x,y,z),triIndex, cubeData);
+                        cubeData.Dispose();
                     }
                 }
             }

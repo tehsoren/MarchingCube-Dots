@@ -28,8 +28,12 @@ namespace adventure
             go.transform.position = (Vector3)chunkPos * Settings.gridSize*Settings.chunkSize;
             mf = go.AddComponent<MeshFilter>();
             mr = go.AddComponent<MeshRenderer>();
+            gameObject = go;
         }
-
+        public void DestroyGameObject()
+        {
+            Object.Destroy(gameObject);
+        }
         public void SetMesh(Mesh mesh)
         {
             mf.mesh = mesh;
@@ -37,6 +41,11 @@ namespace adventure
         public void SetMat(Material material)
         {
             mr.material = material;
+        }
+        public void SetActive(bool active)
+        {
+            if(gameObject != null)
+                gameObject.SetActive(active);
         }
     }
 
