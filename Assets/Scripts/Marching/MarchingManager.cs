@@ -19,7 +19,7 @@ namespace Marching
                 data = new NativeArray<float>(data, Allocator.TempJob),
                 vertices = new NativeList<float3>(500, Allocator.TempJob),
                 triangles = new NativeList<int>(200, Allocator.TempJob),
-                presentVertices = new NativeHashMap<int, int>(200, Allocator.TempJob)
+                presentVertices = new NativeHashMap<MarchingJob.LSF3, int>(200, Allocator.TempJob),
         };
 
             handle = job.Schedule();

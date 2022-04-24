@@ -13,7 +13,7 @@ namespace Marching
         [ReadOnly] public NativeArray<float> data;
         [WriteOnly] public NativeList<float3> vertices;
         [WriteOnly] public NativeList<int> triangles;
-        public NativeHashMap<int, int> presentVertices;
+        public NativeHashMap<LSF3, int> presentVertices;
         private int counter;
         public void Execute()
         {
@@ -26,8 +26,6 @@ namespace Marching
                     for (int z = 0; z < Settings.chunkSize; z++)
                     {
                         NativeArray<float> cubeData = GetCubeData(data,x, y, z);
-                        
-                        
                         // calc triangulation index
                         int triIndex = MarchingHelper.GetCubeIndex(cubeData, Settings.isoLevel);
                         //find triangles
@@ -70,37 +68,42 @@ namespace Marching
             int cubeVertexIndexB = MarchingTables.EdgeVertexTableB[triIndex];
             var cornera = MarchingHelper.GetCornerVertex(cubepos, cubeVertexIndexA);
             var cornerb = MarchingHelper.GetCornerVertex(cubepos, cubeVertexIndexB);
-            var hash = SimpleHashFunc(cornera, cornerb);
-            if(presentVertices.ContainsKey(hash))
+            var corneraval = cubeData[cubeVertexIndexA];
+            var cornerbval = cubeData[cubeVertexIndexB];
+            var newVertex = MarchingHelper.InterpolateEdge(cornera, cornerb, corneraval, cornerbval, Settings.isoLevel);
+            if (presentVertices.ContainsKey(new LSF3(newVertex)))
             {
-                var index = presentVertices[hash];
+                var index = presentVertices[new LSF3(newVertex)];
                 triangles.Add(index);
             }
-            else 
+            else
             {
-                var corneraval = cubeData[cubeVertexIndexA];
-                var cornerbval = cubeData[cubeVertexIndexB];
-                var newVertex = MarchingHelper.InterpolateEdge(cornera, cornerb, corneraval, cornerbval, Settings.isoLevel);
                 vertices.Add(newVertex * Settings.gridSize);
                 triangles.Add(counter);
-                presentVertices.Add(hash, counter);
+                presentVertices.Add(new LSF3(newVertex), counter);
                 counter += 1;
-                
+            }
+        }
+
+        public struct LSF3 : System.IEquatable<LSF3>//Less strict float3
+        {
+            public float3 val;
+
+            public LSF3(float3 val)
+            {
+                this.val = val;
             }
 
-
-
+            public bool Equals(LSF3 other)
+            {
+                var t = (val - other.val);
+                return (math.abs(t.x) + math.abs(t.y) + math.abs(t.z)) < 0.001;
+            }
+            public override int GetHashCode()
+            {
+                var i3 = new int3((int)val.x, (int)val.y, (int)val.z);
+                return (int)math.hash(i3);
+            }
         }
-
-
-        private int SimpleHashFunc(int3 cornera, int3 cornerb)
-        {
-            var a = MarchingHelper.PosToIndex(cornera);
-            var b = MarchingHelper.PosToIndex(cornerb);
-            b *= Settings.totalDataPoints;
-            return a + b;
-        }
-
-
     }
 }
