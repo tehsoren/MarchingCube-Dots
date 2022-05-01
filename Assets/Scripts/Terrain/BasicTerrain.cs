@@ -29,7 +29,7 @@ namespace adventure
                     for (int z = 0; z < Settings.dataSize; z++)
                     {
                         var nz = (chunkPos.z * Settings.chunkSize + z) * Settings.gridSize;
-                        var noise = fnl.GetNoise(nx,ny,nz);
+                        var noise = (fnl.GetNoise(nx*10,ny*10,nz*10)+1)/2;
                         data[Marching.MarchingHelper.PosToIndex(x, y, z)] = noise;
                     }
                 }

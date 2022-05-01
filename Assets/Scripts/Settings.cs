@@ -3,10 +3,10 @@ namespace adventure
     public static class Settings
     {
         //Individual Chunk settings
-        public static readonly int chunkSize = 16;
+        public static readonly int chunkSize = 8;
         public static readonly int dataSize = chunkSize + 1;
         public static readonly int totalDataPoints = dataSize * dataSize * dataSize;
-        public static readonly float gridSize = 1;//how far to go before sample
+        public static readonly float gridSize = 2;//how far to go before sample
 
         //General Chunk settings
         public static readonly int maxNewChunksPerFrame = 10;

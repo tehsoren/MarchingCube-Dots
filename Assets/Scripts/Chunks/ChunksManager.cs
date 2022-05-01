@@ -123,8 +123,9 @@ public class ChunksManager : MonoBehaviour
     {
         for (int i = 0; i < Settings.maxNewChunksPerFrame; i++)
         {
-            if(chunksToAdd.TryDequeue(out Vector3Int newChunk))
+            if(chunksToAdd.Count>0)
             {
+                var newChunk = chunksToAdd.Dequeue();
                 //Check that it hasnt become out of range
                 if((newChunk-PlayerChunkPosInt()).magnitude > Settings.chunkMaxDistance)
                     i -= 1;
